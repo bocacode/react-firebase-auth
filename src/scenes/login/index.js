@@ -1,5 +1,7 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useContext } from 'react'
+import { Link, withRouter } from 'react-router-dom'
+import firebase from 'firebase'
+import { AuthContext } from '../../App'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -30,8 +32,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-function Login() {
+
+function Login({ history }) {
   const classes = useStyles()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setErrors] = useState('')
+  const Auth = useContext(AuthContext)
+
+  const emailLogin = (e) => {
+    e.preventDefault()
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+      .then(() => {
+        firebase.auth()
+          .signInWithEmailAndPassword(email, password)
+          .then(res => {
+            history.push('/')
+            Auth.setLoggedIn(true)
+          })
+          .catch(e => {
+            setErrors(e.message)
+          })
+      })
+  }
+
 
   return (
     <Container component="main" maxWidth="xs">
@@ -43,7 +67,7 @@ function Login() {
         <Typography component="h1" variant="h5">
           Log in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form onSubmit={emailLogin} className={classes.form} noValidate>
           <TextField
             variant="outlined"
             margin="normal"
@@ -53,6 +77,8 @@ function Login() {
             label="Email Address"
             name="email"
             autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             autoFocus
           />
           <TextField
@@ -64,8 +90,13 @@ function Login() {
             label="Password"
             type="password"
             id="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
             autoComplete="current-password"
           />
+          {error &&
+            <span>{error}</span>
+          }
           <Button
             type="submit"
             fullWidth
@@ -91,4 +122,4 @@ function Login() {
   )
 }
 
-export default Login
+export default withRouter(Login)

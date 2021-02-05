@@ -1,5 +1,7 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useContext } from 'react'
+import { Link, withRouter } from 'react-router-dom'
+import firebase from 'firebase'
+import { AuthContext } from '../../App'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -30,8 +32,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-function SignUp() {
+function SignUp({ history }) {
   const classes = useStyles()
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setErrors] = useState('')
+
+  const Auth = useContext(AuthContext)
+
+  const joinWithEmail = (e) => {
+    e.preventDefault()
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+      .then(() => {
+        firebase.auth()
+          .createUserWithEmailAndPassword(email, password)
+          .then(res => {
+            history.push('/') // adding a route to history and navigating to it
+            Auth.setLoggedIn(true)
+          })
+          .catch(e => {
+            setErrors(e.message)
+          })
+      })
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -45,31 +69,8 @@ function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form onSubmit={joinWithEmail} className={classes.form} noValidate>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                autoComplete="fname"
-                name="firstName"
-                variant="outlined"
-                required
-                fullWidth
-                id="firstName"
-                label="First Name"
-                autoFocus
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                autoComplete="lname"
-              />
-            </Grid>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
@@ -78,6 +79,8 @@ function SignUp() {
                 id="email"
                 label="Email Address"
                 name="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
                 autoComplete="email"
               />
             </Grid>
@@ -90,10 +93,15 @@ function SignUp() {
                 label="Password"
                 type="password"
                 id="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
                 autoComplete="current-password"
               />
             </Grid>
           </Grid>
+          {error &&
+            <span>{error}</span>
+          }
           <Button
             type="submit"
             fullWidth
@@ -119,4 +127,4 @@ function SignUp() {
   )
 }
 
-export default SignUp
+export default withRouter(SignUp)
