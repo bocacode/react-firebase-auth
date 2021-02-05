@@ -1,6 +1,8 @@
 # Sample React App with Authentication and Hooks
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This sample project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and uses Material UI Templates.
+
+[See a demo.](https://react-auth-bc.web.app)
 
 ## Scripts
 
