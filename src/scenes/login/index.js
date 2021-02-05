@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Link, withRouter } from 'react-router-dom'
+import firebase from 'firebase'
+import { AuthContext } from '../../App'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -36,13 +38,23 @@ function Login({ history }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setErrors] = useState('')
+  const Auth = useContext(AuthContext)
 
   const emailLogin = (e) => {
     e.preventDefault()
-    setErrors('')
-    history.push('/')
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+      .then(() => {
+        firebase.auth()
+          .signInWithEmailAndPassword(email, password)
+          .then(user => {
+            history.push('/')
+            Auth.setIsLoggedIn(true)
+          })
+          .catch(e => {
+            setErrors('Error: ' + e.message)
+          })
+      })
   }
-
 
   return (
     <Container component="main" maxWidth="xs">

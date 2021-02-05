@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Link, withRouter } from 'react-router-dom'
+import firebase from 'firebase'
+import { AuthContext } from '../../App'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -31,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 function SignUp({ history }) {
+  const Auth = useContext(AuthContext)
   const classes = useStyles()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -38,8 +41,19 @@ function SignUp({ history }) {
 
   const joinWithEmail = (e) => {
     e.preventDefault()
-    setErrors('')
-    history.push('/')
+    firebase.auth()
+      .setPersistence(firebase.auth.Auth.Persistence.SESSION)
+        .then(() => {
+          firebase.auth()
+            .createUserWithEmailAndPassword(email, password)
+              .then(user => {
+                Auth.setIsLoggedIn(true)
+                history.push('/')
+              })
+        .catch(err => {
+          setErrors('Error: '+ err)
+        })
+    })
   }
 
   return (

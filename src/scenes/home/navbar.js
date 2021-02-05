@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { AuthContext } from '../../App'
 import AppBar from '@material-ui/core/AppBar'
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import IconButton from '@material-ui/core/IconButton'
@@ -20,10 +21,10 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 function Navbar() {
+  const Auth = useContext(AuthContext)
   const classes = useStyles()
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
-  const auth = false
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget)
@@ -34,6 +35,7 @@ function Navbar() {
   }
 
   const handleLogout = () => {
+    Auth.setIsLoggedIn(false)
     handleClose()
   }
 
@@ -71,7 +73,7 @@ function Navbar() {
             open={open}
             onClose={handleClose}
           >
-            {auth ?
+            {Auth.isLoggedIn ?
               <MenuItem onClick={handleLogout}>
                 <Link>Logout</Link>
               </MenuItem>
