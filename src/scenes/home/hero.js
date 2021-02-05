@@ -1,5 +1,4 @@
-import React, { useContext } from 'react'
-import { AuthContext } from '../../App'
+import React from 'react'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
@@ -18,13 +17,12 @@ const useStyles = makeStyles((theme) => ({
 
 function Hero() {
   const classes = useStyles()
-  const Auth = useContext(AuthContext)
-
+  const auth = false
   return (
     <div className={classes.heroContent}>
       <Container maxWidth="sm">
         <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-          {Auth.isLoggedIn ? 'Welcome User' : 'Please Login'}
+          {auth ? 'Welcome User' : 'Please Login'}
         </Typography>
         <Typography variant="h5" align="center" color="textSecondary" paragraph>
           Something short and leading about the collection below—its contents, the creator, etc.

@@ -1,7 +1,5 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Link, withRouter } from 'react-router-dom'
-import firebase from 'firebase'
-import { AuthContext } from '../../App'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -34,27 +32,14 @@ const useStyles = makeStyles((theme) => ({
 
 function SignUp({ history }) {
   const classes = useStyles()
-
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setErrors] = useState('')
 
-  const Auth = useContext(AuthContext)
-
   const joinWithEmail = (e) => {
     e.preventDefault()
-    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
-      .then(() => {
-        firebase.auth()
-          .createUserWithEmailAndPassword(email, password)
-          .then(res => {
-            history.push('/') // adding a route to history and navigating to it
-            Auth.setLoggedIn(true)
-          })
-          .catch(e => {
-            setErrors(e.message)
-          })
-      })
+    setErrors('')
+    history.push('/')
   }
 
   return (
